@@ -1,0 +1,52 @@
+<style>
+  .sb-form { display: grid; gap: 14px; padding: 4px 0; }
+  .sb-hint { color: var(--homey-color-text-light, #888); font-size: 14px; margin: 0; }
+  .sb-error { color: var(--homey-color-danger, #e0303a); min-height: 1.2em; margin: 0; }
+</style>
+
+<header class="homey-header">
+  <h1 class="homey-title" data-i18n="pair.title"></h1>
+  <p class="homey-subtitle" data-i18n="pair.subtitle"></p>
+</header>
+
+<form id="sb-form" class="homey-form sb-form">
+  <div class="homey-form-group">
+    <label class="homey-form-label" for="sb-address" data-i18n="pair.address"></label>
+    <input class="homey-form-input" id="sb-address" type="text" inputmode="decimal" placeholder="192.168.1.50" autocomplete="off">
+  </div>
+  <div class="homey-form-group">
+    <label class="homey-form-label" for="sb-port" data-i18n="pair.port"></label>
+    <input class="homey-form-input" id="sb-port" type="number" value="8080" min="1" max="65535">
+  </div>
+  <div class="homey-form-group">
+    <label class="homey-form-label" for="sb-key" data-i18n="pair.api_key"></label>
+    <input class="homey-form-input" id="sb-key" type="password" autocomplete="off">
+  </div>
+  <p class="sb-hint" data-i18n="pair.hint"></p>
+  <p class="sb-error" id="sb-error"></p>
+  <button class="homey-button-primary-full" id="sb-next" type="submit" data-i18n="pair.next"></button>
+</form>
+
+<script type="application/javascript">
+  document.getElementById('sb-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var button = document.getElementById('sb-next');
+    var error = document.getElementById('sb-error');
+    error.textContent = '';
+    button.classList.add('is-loading');
+    button.disabled = true;
+
+    Homey.emit('connect', {
+      address: document.getElementById('sb-address').value,
+      port: Number(document.getElementById('sb-port').value) || 8080,
+      apiKey: document.getElementById('sb-key').value,
+    }).then(function () {
+      Homey.showView('list_devices');
+    }).catch(function (err) {
+      error.textContent = err.message || String(err);
+    }).finally(function () {
+      button.classList.remove('is-loading');
+      button.disabled = false;
+    });
+  });
+</script>

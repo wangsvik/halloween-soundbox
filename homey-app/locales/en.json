@@ -1,0 +1,15 @@
+{
+  "unreachable": "Soundbox is unreachable. Is the Raspberry Pi on?",
+  "waiting_for_discovery": "Waiting for the soundbox to appear on the network…",
+  "all_categories": "All categories",
+  "pair": {
+    "title": "Connect soundbox",
+    "subtitle": "Leave the IP address empty to search automatically.",
+    "address": "IP address (optional)",
+    "port": "Port",
+    "api_key": "API key (optional)",
+    "hint": "The soundbox is found automatically when the Pi and Homey are on the same network.",
+    "next": "Next",
+    "needs_key": "This soundbox requires an API key."
+  }
+}

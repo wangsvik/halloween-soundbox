@@ -1,0 +1,12 @@
+{
+  "type": "string",
+  "title": {
+    "en": "Now playing",
+    "no": "Spiller nå"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "icon": "/assets/icon.svg",
+  "insights": false
+}

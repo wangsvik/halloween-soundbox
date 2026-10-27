@@ -1,0 +1,11 @@
+# Halloween Soundbox – konfigurasjon
+name: Halloween Soundbox     # navnet Homey ser ved paring
+port: 8080
+api_key: ""                  # sett en nøkkel hvis nettet ikke er helt ditt eget
+sounds_dir: sounds
+channels: 8                  # antall effekter som kan spille samtidig
+duck_level: 0.35             # ambiens dempes til 35 % mens en effekt spiller
+ambient_level: 0.6           # ambiens-volum i forhold til hovedvolum
+default_volume: 70
+resume_ambient: true         # start ambiens igjen etter strømbrudd/omstart
+mdns: true                   # la Homey finne boksen automatisk

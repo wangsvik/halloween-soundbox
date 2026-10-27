@@ -1,0 +1,15 @@
+{
+  "unreachable": "Får ikke kontakt med soundboxen. Er Raspberry Pi-en på?",
+  "waiting_for_discovery": "Venter på at soundboxen skal dukke opp på nettverket …",
+  "all_categories": "Alle kategorier",
+  "pair": {
+    "title": "Koble til soundbox",
+    "subtitle": "La IP-adressen stå tom for å søke automatisk.",
+    "address": "IP-adresse (valgfritt)",
+    "port": "Port",
+    "api_key": "API-nøkkel (valgfritt)",
+    "hint": "Soundboxen finnes automatisk når Pi-en og Homey er på samme nettverk.",
+    "next": "Neste",
+    "needs_key": "Denne soundboxen krever API-nøkkel."
+  }
+}

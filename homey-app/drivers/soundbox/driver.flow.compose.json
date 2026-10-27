@@ -1,0 +1,137 @@
+{
+  "triggers": [
+    {
+      "id": "sound_started",
+      "title": { "en": "A sound started", "no": "En lyd startet" },
+      "tokens": [
+        { "name": "sound", "type": "string", "title": { "en": "Sound", "no": "Lyd" }, "example": "Skrik" },
+        { "name": "sound_id", "type": "string", "title": { "en": "Sound ID", "no": "Lyd-ID" }, "example": "skrik/heks" },
+        { "name": "category", "type": "string", "title": { "en": "Category", "no": "Kategori" }, "example": "skrik" },
+        { "name": "duration", "type": "number", "title": { "en": "Duration (s)", "no": "Varighet (s)" }, "example": 3.5 }
+      ]
+    },
+    {
+      "id": "sound_finished",
+      "title": { "en": "A sound finished", "no": "En lyd ble ferdig" },
+      "tokens": [
+        { "name": "sound", "type": "string", "title": { "en": "Sound", "no": "Lyd" }, "example": "Skrik" },
+        { "name": "sound_id", "type": "string", "title": { "en": "Sound ID", "no": "Lyd-ID" }, "example": "skrik/heks" },
+        { "name": "category", "type": "string", "title": { "en": "Category", "no": "Kategori" }, "example": "skrik" },
+        { "name": "interrupted", "type": "boolean", "title": { "en": "Interrupted", "no": "Avbrutt" }, "example": false }
+      ]
+    },
+    {
+      "id": "specific_sound_finished",
+      "title": { "en": "A specific sound finished", "no": "En bestemt lyd ble ferdig" },
+      "titleFormatted": { "en": "[[sound]] finished playing", "no": "[[sound]] er ferdig" },
+      "args": [
+        { "type": "autocomplete", "name": "sound", "title": { "en": "Sound", "no": "Lyd" }, "placeholder": { "en": "Scream", "no": "Skrik" } }
+      ],
+      "tokens": [
+        { "name": "interrupted", "type": "boolean", "title": { "en": "Interrupted", "no": "Avbrutt" }, "example": false }
+      ]
+    }
+  ],
+  "conditions": [
+    {
+      "id": "is_playing",
+      "title": { "en": "A sound !{{is|isn't}} playing", "no": "En lyd !{{spiller|spiller ikke}}" }
+    },
+    {
+      "id": "ambient_on",
+      "title": { "en": "Ambience !{{is|isn't}} on", "no": "Ambiens !{{er|er ikke}} på" }
+    }
+  ],
+  "actions": [
+    {
+      "id": "play_sound",
+      "title": { "en": "Play sound", "no": "Spill lyd" },
+      "titleFormatted": { "en": "Play [[sound]]", "no": "Spill [[sound]]" },
+      "args": [
+        { "type": "autocomplete", "name": "sound", "title": { "en": "Sound", "no": "Lyd" }, "placeholder": { "en": "Scream", "no": "Skrik" } }
+      ]
+    },
+    {
+      "id": "play_sound_volume",
+      "title": { "en": "Play sound at volume", "no": "Spill lyd med volum" },
+      "titleFormatted": { "en": "Play [[sound]] at [[volume]] %", "no": "Spill [[sound]] med [[volume]] % volum" },
+      "args": [
+        { "type": "autocomplete", "name": "sound", "title": { "en": "Sound", "no": "Lyd" } },
+        { "type": "range", "name": "volume", "title": { "en": "Volume", "no": "Volum" }, "min": 0, "max": 100, "step": 5, "label": " %", "labelDecimals": 0 }
+      ]
+    },
+    {
+      "id": "play_sound_wait",
+      "title": { "en": "Play sound and wait until finished", "no": "Spill lyd og vent til den er ferdig" },
+      "titleFormatted": { "en": "Play [[sound]] and wait until finished", "no": "Spill [[sound]] og vent til den er ferdig" },
+      "hint": { "en": "The flow continues when the sound has finished playing.", "no": "Flowen fortsetter først når lyden er ferdig." },
+      "args": [
+        { "type": "autocomplete", "name": "sound", "title": { "en": "Sound", "no": "Lyd" } }
+      ]
+    },
+    {
+      "id": "play_random",
+      "title": { "en": "Play random sound", "no": "Spill tilfeldig lyd" },
+      "titleFormatted": { "en": "Play random sound from [[category]]", "no": "Spill tilfeldig lyd fra [[category]]" },
+      "args": [
+        { "type": "autocomplete", "name": "category", "title": { "en": "Category", "no": "Kategori" } }
+      ]
+    },
+    {
+      "id": "ambient_start",
+      "title": { "en": "Start ambience", "no": "Start ambiens" },
+      "titleFormatted": { "en": "Start ambience [[track]]", "no": "Start ambiens [[track]]" },
+      "args": [
+        { "type": "autocomplete", "name": "track", "title": { "en": "Ambience", "no": "Ambiens" } }
+      ]
+    },
+    {
+      "id": "ambient_stop",
+      "title": { "en": "Stop ambience", "no": "Stopp ambiens" }
+    },
+    {
+      "id": "stop_all",
+      "title": { "en": "Stop all sounds", "no": "Stopp alle lyder" }
+    },
+    {
+      "id": "sound_url",
+      "title": { "en": "Get sound URL (for Sonos etc.)", "no": "Finn lyd-URL (for Sonos o.l.)" },
+      "titleFormatted": { "en": "Get URL for [[sound]]", "no": "Finn URL for [[sound]]" },
+      "hint": { "en": "Plays nothing on the soundbox. Use the URL token with e.g. Sonos “Play URL”.", "no": "Spiller ingenting på soundboxen. Bruk URL-tokenet i f.eks. Sonos-kortet «Spill URL»." },
+      "args": [
+        { "type": "autocomplete", "name": "sound", "title": { "en": "Sound", "no": "Lyd" } }
+      ],
+      "tokens": [
+        { "name": "url", "type": "string", "title": { "en": "URL", "no": "URL" }, "example": "http://192.168.1.50:8080/media/effects/skrik/heks.mp3" },
+        { "name": "sound", "type": "string", "title": { "en": "Sound", "no": "Lyd" }, "example": "Heks" },
+        { "name": "category", "type": "string", "title": { "en": "Category", "no": "Kategori" }, "example": "skrik" }
+      ]
+    },
+    {
+      "id": "random_sound_url",
+      "title": { "en": "Get random sound URL (for Sonos etc.)", "no": "Finn tilfeldig lyd-URL (for Sonos o.l.)" },
+      "titleFormatted": { "en": "Get random sound URL from [[category]]", "no": "Finn tilfeldig lyd-URL fra [[category]]" },
+      "hint": { "en": "Plays nothing on the soundbox. Use the URL token with e.g. Sonos “Play URL”.", "no": "Spiller ingenting på soundboxen. Bruk URL-tokenet i f.eks. Sonos-kortet «Spill URL»." },
+      "args": [
+        { "type": "autocomplete", "name": "category", "title": { "en": "Category", "no": "Kategori" } }
+      ],
+      "tokens": [
+        { "name": "url", "type": "string", "title": { "en": "URL", "no": "URL" }, "example": "http://192.168.1.50:8080/media/effects/skrik/heks.mp3" },
+        { "name": "sound", "type": "string", "title": { "en": "Sound", "no": "Lyd" }, "example": "Heks" },
+        { "name": "category", "type": "string", "title": { "en": "Category", "no": "Kategori" }, "example": "skrik" }
+      ]
+    },
+    {
+      "id": "ambient_url",
+      "title": { "en": "Get ambience URL (for Sonos etc.)", "no": "Finn ambiens-URL (for Sonos o.l.)" },
+      "titleFormatted": { "en": "Get URL for ambience [[track]]", "no": "Finn URL for ambiens [[track]]" },
+      "args": [
+        { "type": "autocomplete", "name": "track", "title": { "en": "Ambience", "no": "Ambiens" } }
+      ],
+      "tokens": [
+        { "name": "url", "type": "string", "title": { "en": "URL", "no": "URL" }, "example": "http://192.168.1.50:8080/media/ambient/storm.mp3" },
+        { "name": "sound", "type": "string", "title": { "en": "Ambience", "no": "Ambiens" }, "example": "Storm" }
+      ]
+    }
+  ]
+}
