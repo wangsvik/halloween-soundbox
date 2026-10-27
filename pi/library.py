@@ -86,6 +86,29 @@ class SoundLibrary:
             if time.monotonic() - self._scanned_at > RESCAN_INTERVAL:
                 self._scan()
 
+    def invalidate(self) -> None:
+        with self._lock:
+            self._scanned_at = 0.0
+
+    def effect_folder(self, category: str) -> Path:
+        """Mappen for en kategori. Finnes den (sammenlignet som slug), brukes den eksisterende."""
+        wanted = _slug(category or DEFAULT_CATEGORY)
+        base = self.root / "effects"
+        for folder in base.iterdir():
+            if folder.is_dir() and _slug(folder.name) == wanted:
+                return folder
+        return base / (category.strip() or DEFAULT_CATEGORY)
+
+    def ambient_folder(self) -> Path:
+        return self.root / "ambient"
+
+    def remove(self, sound: Sound) -> None:
+        sound.path.unlink(missing_ok=True)
+        folder = sound.path.parent
+        if sound.kind == "effect" and folder != self.root / "effects" and not any(folder.iterdir()):
+            folder.rmdir()  # tom kategori forsvinner
+        self.invalidate()
+
     def effects(self) -> list[Sound]:
         self._fresh()
         return list(self._sounds.values())

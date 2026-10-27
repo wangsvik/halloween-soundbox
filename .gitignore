@@ -4,3 +4,8 @@ pi/state.json
 pi/state.tmp
 homey-app/node_modules/
 homey-app/.homeybuild/
+# Egne lyder lastet opp på Pi-en (bare demolydene ligger i repoet)
+pi/sounds/effects/*
+!pi/sounds/effects/demo/
+pi/sounds/ambient/*
+!pi/sounds/ambient/vind.wav

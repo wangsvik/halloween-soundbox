@@ -9,3 +9,4 @@ ambient_level: 0.6           # ambiens-volum i forhold til hovedvolum
 default_volume: 70
 resume_ambient: true         # start ambiens igjen etter strømbrudd/omstart
 mdns: true                   # la Homey finne boksen automatisk
+normalize_uploads: true      # jevn ut lydstyrken på opplastede filer (krever ffmpeg)

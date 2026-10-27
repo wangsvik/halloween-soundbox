@@ -141,6 +141,7 @@ function connect() {
     if (ev.data === "pong") return;
     const msg = JSON.parse(ev.data);
     if (msg.type === "state") { const { type, ...s } = msg; state = s; renderState(); }
+    if (msg.type === "library") loadLibrary();
   };
   ws.onclose = () => {
     $("#conn").classList.remove("on");

@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="no">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#120d1a">
+  <title>Lyder – Halloween Soundbox</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="manage">
+  <header class="top">
+    <div class="brand">
+      <a href="./" class="back" aria-label="Tilbake">‹</a>
+      <h1>Lyder</h1>
+    </div>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>Last opp</h2>
+      <form id="upload" class="upload">
+        <div class="seg" role="radiogroup" aria-label="Type">
+          <label><input type="radio" name="kind" value="effect" checked><span>Effekt</span></label>
+          <label><input type="radio" name="kind" value="ambient"><span>Ambiens (loop)</span></label>
+        </div>
+
+        <label class="field" id="cat-field">
+          <span>Kategori</span>
+          <input id="category" list="categories" placeholder="f.eks. skrik, monstre, latter" autocomplete="off" required>
+          <datalist id="categories"></datalist>
+        </label>
+
+        <label id="drop" class="drop">
+          <input id="files" type="file" multiple accept="audio/*">
+          <strong>Velg lydfiler</strong>
+          <small id="drop-hint">eller dra dem hit</small>
+        </label>
+        <ul id="queue" class="queue"></ul>
+
+        <div id="progress" class="progress" hidden><i></i></div>
+        <button id="send" class="btn-random" type="submit" disabled>Last opp</button>
+        <p id="formats" class="hint"></p>
+      </form>
+    </section>
+
+    <section class="card">
+      <div class="row">
+        <h2>Lyder på boksen</h2>
+        <small id="count" class="hint"></small>
+      </div>
+      <div id="list"></div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" hidden></div>
+  <script src="manage.js"></script>
+</body>
+</html>

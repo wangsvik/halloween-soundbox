@@ -8,7 +8,7 @@ USER_NAME="${SUDO_USER:-$USER}"
 
 echo "==> Installerer systempakker"
 sudo apt-get update
-sudo apt-get install -y python3-venv python3-pip libsdl2-mixer-2.0-0 alsa-utils
+sudo apt-get install -y python3-venv python3-pip libsdl2-mixer-2.0-0 alsa-utils ffmpeg
 
 echo "==> Lager Python-miljø"
 python3 -m venv "$DIR/.venv"
@@ -22,7 +22,8 @@ echo "==> Installerer systemd-tjeneste"
 sed -e "s|__DIR__|$DIR|g" -e "s|__USER__|$USER_NAME|g" "$DIR/soundbox.service" \
   | sudo tee /etc/systemd/system/soundbox.service > /dev/null
 sudo systemctl daemon-reload
-sudo systemctl enable --now soundbox.service
+sudo systemctl enable soundbox.service
+sudo systemctl restart soundbox.service
 
 IP="$(hostname -I | awk '{print $1}')"
 echo

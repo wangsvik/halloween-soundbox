@@ -42,7 +42,20 @@ Homey Pro  –  homey-app/  ─────────────────�
 
 Logg: `journalctl -u soundbox -f` · Omstart: `sudo systemctl restart soundbox`
 
+**Oppdatere til nyeste versjon:** `cd ~/halloween-soundbox && git pull && cd pi && ./install.sh` (lydene og innstillingene dine beholdes).
+
 ## 2. Legg inn lydene dine
+
+**Enklest: last opp fra mobilen eller PC-en.** Åpne `http://<pi>:8080`, trykk **＋ Lyder** øverst til høyre, velg *Effekt* eller *Ambiens*, skriv eller velg en kategori, og velg filene. På PC kan du også dra dem inn.
+
+- Du kan laste opp flere filer samtidig (maks 50 MB per fil).
+- MP3, WAV og OGG fungerer direkte. M4A, AAC, FLAC, OPUS, AIFF med flere (f.eks. lydopptak fra iPhone) konverteres automatisk til MP3.
+- Lydstyrken jevnes ut automatisk, så et hvisk og et skrik ikke blir helt forskjellig i volum. Slå det av med `normalize_uploads: false` i `config.yaml`.
+- Filer som ikke kan spilles, avvises med en feilmelding.
+- På samme side kan du lytte (▶ spiller på boksen) og slette lyder.
+- Homey og mobilsiden oppdateres med en gang.
+
+Du kan også legge filer rett i mappene på Pi-en (f.eks. med `scp`):
 
 ```
 pi/sounds/
@@ -58,8 +71,7 @@ pi/sounds/
     └── hjemsøkt-hus.mp3
 ```
 
-- Formater: **MP3, WAV, OGG**. Nye filer plukkes opp automatisk (ingen omstart).
-- Kopier med `scp`, eller del mappen via Samba om du vil dra og slippe fra PC-en.
+- Formater i mappene: **MP3, WAV, OGG**. Nye filer plukkes opp automatisk (ingen omstart).
 - `effects/demo/` og `ambient/vind.wav` er syntetiske testlyder. Slett dem når du har lagt inn egne.
 - Gratis lyder: freesound.org, pixabay.com/sound-effects (sjekk lisensen).
 
@@ -146,6 +158,8 @@ Samme URL fungerer i Chromecast-kortet «Cast audio URL».
 | POST | `/api/volume` | `{"level": 60}` |
 | POST | `/api/stop` | `{"what": "all" \| "effects" \| "ambient"}` |
 | GET | `/media/effects/<id>.mp3` · `/media/ambient/<id>.mp3` | selve lydfilen (for Sonos o.l.). Stien står i feltet `media` i `/api/sounds` |
+| POST | `/api/upload` | multipart: `files` (én eller flere), `kind` = effect/ambient, `category` |
+| DELETE | `/api/sounds/<effect\|ambient>/<id>` | |
 | WS | `/ws` | sender `state`, `sound_started`, `sound_finished` |
 
 Med API-nøkkel: header `X-Api-Key: <nøkkel>` (eller `?key=` i URL-en). Interaktiv dokumentasjon finnes på `http://<pi>:8080/docs`.

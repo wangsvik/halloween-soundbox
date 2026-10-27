@@ -176,6 +176,7 @@ class SoundboxClient extends EventEmitter {
       if (text === 'pong') return;
       let msg;
       try { msg = JSON.parse(text); } catch (err) { return; }
+      if (msg && msg.type === 'library') this.soundsCache = null; // nye/slettede lyder
       if (msg && msg.type) this.emit(msg.type, msg);
     });
 

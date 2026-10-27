@@ -10,18 +10,22 @@ import json
 import logging
 import os
 import random
+import tempfile
 import uuid
 from contextlib import asynccontextmanager
 from pathlib import Path
 
 import uvicorn
 import yaml
-from fastapi import Depends, FastAPI, Header, HTTPException, Query, WebSocket, WebSocketDisconnect
+from fastapi import (Depends, FastAPI, File, Form, Header, HTTPException, Query, UploadFile, WebSocket,
+                     WebSocketDisconnect)
+from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from audio import AudioEngine
+import uploads
+from audio import AudioEngine, pygame
 from discovery import Announcer
 from library import SoundLibrary
 
@@ -41,6 +45,7 @@ DEFAULT_CONFIG = {
     "default_volume": 70,
     "resume_ambient": True,  # start ambiens igjen etter omstart
     "mdns": True,
+    "normalize_uploads": True,  # jevn ut lydstyrken på opplastede filer (krever ffmpeg)
 }
 
 
@@ -257,6 +262,70 @@ def stop(req: StopRequest | None = None):
     if what in ("all", "ambient"):
         engine.stop_ambient()
     return engine.state()
+
+
+@app.get("/api/upload", dependencies=auth)
+def upload_info():
+    return {"extensions": uploads.accepted_extensions(), "ffmpeg": uploads.ffmpeg_available(),
+            "normalize": bool(config["normalize_uploads"]), "max_mb": uploads.MAX_BYTES // (1024 * 1024)}
+
+
+@app.post("/api/upload", dependencies=auth)
+async def upload(files: list[UploadFile] = File(...), kind: str = Form("effect"), category: str = Form("")):
+    if kind not in ("effect", "ambient"):
+        raise HTTPException(400, "kind må være 'effect' eller 'ambient'")
+    if kind == "effect":
+        folder = library.effect_folder(uploads.clean_name(category, fallback="diverse"))
+    else:
+        folder = library.ambient_folder()
+
+    saved, errors = [], []
+    for file in files:
+        name = file.filename or "lyd"
+        with tempfile.NamedTemporaryFile(delete=False, suffix=Path(name).suffix) as tmp:
+            tmp_path = Path(tmp.name)
+            size = 0
+            while chunk := await file.read(1024 * 1024):
+                size += len(chunk)
+                if size > uploads.MAX_BYTES:
+                    break
+                tmp.write(chunk)
+        try:
+            if size > uploads.MAX_BYTES:
+                raise uploads.UploadError(f"Filen er større enn {uploads.MAX_BYTES // (1024 * 1024)} MB")
+            path = await run_in_threadpool(uploads.store, tmp_path, name, folder, config["normalize_uploads"])
+            if kind == "effect":
+                try:
+                    await run_in_threadpool(pygame.mixer.Sound, str(path))  # sjekk at den faktisk kan spilles
+                except Exception:
+                    path.unlink(missing_ok=True)
+                    raise uploads.UploadError("Filen kunne ikke spilles av (ødelagt eller ukjent format)")
+            saved.append(path.name)
+        except uploads.UploadError as exc:
+            errors.append({"file": name, "error": str(exc)})
+        finally:
+            tmp_path.unlink(missing_ok=True)
+
+    library.invalidate()
+    hub.publish({"type": "library"})
+    return {"saved": saved, "errors": errors}
+
+
+@app.delete("/api/sounds/{kind}/{sound_id:path}", dependencies=auth)
+def delete_sound(kind: str, sound_id: str):
+    if kind == "effect":
+        sound = library.effect(sound_id)
+    elif kind == "ambient":
+        sound = library.ambient_track(sound_id)
+        if sound and engine.ambient and engine.ambient.id == sound.id:
+            engine.stop_ambient()
+    else:
+        sound = None
+    if not sound:
+        raise HTTPException(404, f"Fant ikke '{sound_id}'")
+    library.remove(sound)
+    hub.publish({"type": "library"})
+    return {"deleted": sound.id}
 
 
 MEDIA_TYPES = {".mp3": "audio/mpeg", ".wav": "audio/wav", ".ogg": "audio/ogg"}
